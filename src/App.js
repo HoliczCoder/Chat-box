@@ -1,13 +1,11 @@
 import * as React from "react";
 import {Routes, Route, Link, BrowserRouter} from "react-router-dom";
-import Header from "./components/Header";
-import Footer from "./components/Footer";
-import List from "./pages/todos/List";
-import Add from "./pages/todos/Add";
-import Edit from "./pages/todos/Edit";
-import GalleryImage from "./pages/todos/GalleryImage";
-import Login from "./pages/auth/Login";
 
+import Home from "./home";
+import Header from "./Components/Header";
+import Footer from "./Components/Footer";
+import Login from "./pages/Auth/Login";
+import Signup from "./pages/Auth/Signup";
 
 function App() {
     return (
@@ -16,11 +14,8 @@ function App() {
             <div className="container mx-auto">
                 <BrowserRouter>
                     <Routes>
-                        <Route path="/" element={<List/>}/>
-                        <Route path="/add" element={<Add/>}/>
-                        <Route path="/edit" element={<Edit/>}/>
-                        <Route path="/gallery" element={<GalleryImage/>}/>
                         <Route path="/login" element={<Login/>}/>
+                        <Route path="/signup" element={<Signup/>}/>
                     </Routes>
                 </BrowserRouter>
             </div>
@@ -29,4 +24,4 @@ function App() {
     );
 }
 
-export default App
+export default App;
