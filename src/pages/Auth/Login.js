@@ -14,7 +14,7 @@ export default function Login() {
       const resp = await signInWithEmailAndPassword(auth, email, password);
       console.log(resp.user);
       sessionStorage.setItem("user", JSON.stringify(resp.user));
-      navigate('/home');
+      navigate('/');
     } catch (e) {
       console.log(e);
     }

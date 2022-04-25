@@ -6,6 +6,8 @@ import Header from "./Components/Header";
 import Footer from "./Components/Footer";
 import Login from "./pages/Auth/Login";
 import Signup from "./pages/Auth/Signup";
+import TodoList from "./pages/Home/TodoList";
+import List from "./pages/List";
 
 function App() {
     return (
@@ -15,7 +17,9 @@ function App() {
                 <BrowserRouter>
                     <Routes>
                         <Route path="/login" element={<Login/>}/>
+                        <Route path="/" element={<TodoList/>}/>
                         <Route path="/signup" element={<Signup/>}/>
+                        <Route path="/list" element={<List/>}/>
                     </Routes>
                 </BrowserRouter>
             </div>
