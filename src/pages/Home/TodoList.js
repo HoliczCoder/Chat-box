@@ -1,10 +1,14 @@
 import React ,{useState,useEffect} from 'react';
-import {addDoc, collection, deleteDoc, doc, onSnapshot} from "firebase/firestore";
+import {addDoc, collection, deleteDoc, doc, onSnapshot,getDocs,query,where} from "firebase/firestore";
+import {getAuth} from "firebase/auth";
 import {db} from "../../firebase";
+import {Link} from "react-router-dom";
 
 
 function TodoList(props) {
     const [message, setMessage] = useState("");
+    const auth = getAuth();
+    const uid = auth?.currentUser?.uid;
     const addNote = async () => {
         if (!message) {
             alert("Nhập vào rồi hãy submit bạn ơi");
@@ -14,6 +18,7 @@ function TodoList(props) {
         try {
             await addDoc(collectionRef, {
                 message,
+                uid
             });
         } catch (e) {
             console.log(e);
@@ -24,22 +29,33 @@ function TodoList(props) {
     let unsub = null;
     useEffect(() => {
         (async () => {
-            const collectionRef = collection(db, "test");
-            //const collectionQuery = query(collectionRef, limit(3));
-            unsub = onSnapshot(collectionRef, (snapShot) => {
-                const localTodos = [];
-                console.log("co su thay doi du lieu");
-                /*  localTodos.push({ id: doc.id, message: doc.data().message }); */
-                snapShot.forEach((doc) => {
-                    localTodos.push({ id: doc.id, message: doc.data().message });
-                });
-                setTodos(localTodos);
+            // const collectionRef = collection(db, "todos");
+            // // const collectionQuery = query(collectionRef, limit(3));
+            // unsub = onSnapshot(collectionRef, (snapShot) => {
+            //     const localTodos = [];
+            //     console.log("co su thay doi du lieu");
+            //     /*  localTodos.push({ id: doc.id, message: doc.data().message }); */
+            //     snapShot.forEach((doc) => {
+            //         localTodos.push({ id: doc.id, message: doc.data().message });
+            //     });
+            //     setTodos(localTodos);
+            // });
+            const q = query(collection(db, "todos"), where("uid", "==", uid));
+
+            const querySnapshot = await getDocs(q);
+            const localTodos = [];
+            querySnapshot.forEach((doc) => {
+                // doc.data() is never undefined for query doc snapshots
+                // console.log(doc.id, " => ", doc.data());
+                localTodos.push({ id: doc.id, message: doc.data().message });
             });
+            setTodos(localTodos);
         })();
+
     }, []);
     const [todos, setTodos] = useState([]);
     const deleteNote = async (id) => {
-        const docRef = doc(db, "test", id);
+        const docRef = doc(db, "todos", id);
         await deleteDoc(docRef);
     };
     return (
@@ -49,20 +65,18 @@ function TodoList(props) {
                     <h1 className="text-grey-darkest">Todo List</h1>
                     <div className="flex mt-4">
                         <input className="shadow appearance-none border rounded w-full py-2 px-3 mr-4 text-grey-darker" onChange={e=>setMessage(e.target.value)} placeholder="Add Todo" />
-                        <button className="flex-no-shrink p-2 border-2 rounded text-teal border-teal hover:text-white hover:bg-teal" onClick={addNote}>Add</button>
+                        <button className="flex-no-shrink p-2 border-2 rounded text-teal-500 border-teal-500 hover:text-white hover:bg-teal-500" onClick={addNote}>Add</button>
                     </div>
                 </div>
                 <div>
-                    <div className="flex mb-4 items-center">
-                        <input className="w-full text-grey-darkest border border-gray-200" />
-                        <button className="flex-no-shrink p-2 ml-4 mr-2 border-2 rounded hover:text-white text-green border-green hover:bg-green">Done</button>
-                        <button className="flex-no-shrink p-2 ml-2 border-2 rounded text-red border-red hover:text-white hover:bg-red">Remove</button>
-                    </div>
-                    <div className="flex mb-4 items-center">
-                        <p className="w-full line-through text-green">Submit Todo App Component to Tailwind Components</p>
-                        <button className="flex-no-shrink p-2 ml-4 mr-2 border-2 rounded hover:text-white text-grey border-grey hover:bg-grey">Not Done</button>
-                        <button className="flex-no-shrink p-2 ml-2 border-2 rounded text-red border-red hover:text-white hover:bg-red">Remove</button>
-                    </div>
+                    {todos.map((todo, index) => (
+                        <div className="flex justify-between mb-4 items-center" key={index}>
+                            {todo.message}
+                            <Link  className="flex-no-shrink p-2 ml-2 border-2 rounded text-blue-500 border-blue-500 hover:text-white hover:bg-blue-500" to={`/edit?id=${todo.id}`}> Edit </Link>
+                            <button className="flex-no-shrink p-2 ml-2 border-2 rounded text-red-500 border-red-500 hover:text-white hover:bg-red-500" onClick={() => deleteNote(todo.id)}>Delete Note</button>
+                        </div>
+                    ))}
+
                 </div>
             </div>
         </div>

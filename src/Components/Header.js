@@ -1,18 +1,42 @@
-import React from 'react';
+import React, {useState} from 'react';
+import {getAuth, signOut} from "firebase/auth";
+import {useNavigate} from "react-router-dom";
+
 
 function Header(props) {
+    const auth = getAuth();
+    const user = auth.currentUser;
+    let navigate = useNavigate();
+    const logout = () => {
+        signOut(auth).then(() => {
+            // Sign-out successful.
+            alert("Đăng xuất thành công");
+            navigate('/')
+        }).catch((error) => {
+            // An error happened.
+            console.log(error)
+        });
+    }
     return (
         <nav className="bg-white border-gray-200 px-2 sm:px-4 py-2.5 rounded dark:bg-gray-800">
             <div className="container flex flex-wrap justify-between items-center mx-auto">
                 <a href="https://flowbite.com" className="flex items-center">
-                    <img src="https://sotavn.com/media/stories/images/thiet-ke-logo-ban-hang-online-5.jpg" className="mr-3 h-6 sm:h-9" alt="Flowbite Logo"/>
+                    <img src="https://sotavn.com/media/stories/images/thiet-ke-logo-ban-hang-online-5.jpg"
+                         className="mr-3 h-6 sm:h-9" alt="Flowbite Logo"/>
                     <span
                         className="self-center text-xl font-semibold whitespace-nowrap dark:text-white">Flowbite</span>
                 </a>
-                <div className="flex md:order-2">
+                <div className="flex md:order-2 gap-4">
+                    {user &&
                     <button type="button"
-                            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-3 md:mr-0 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                        Giỏ hàng
+                            className="text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-3 md:mr-0 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
+                        {user.email}
+                    </button>}
+                    <button
+                        onClick={logout}
+                        type="button"
+                        className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-3 md:mr-0 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                        Log out
                     </button>
                 </div>
                 <div className="hidden justify-between items-center w-full md:flex md:w-auto md:order-1"
