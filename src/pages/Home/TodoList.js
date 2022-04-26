@@ -42,8 +42,6 @@ function TodoList(props) {
             // });
             const q = query(collectionRef, where("uid", "==", uid));
 
-            const querySnapshot = await getDocs(q);
-            const localTodos = [];
             unsub = onSnapshot(q, (snapShot) => {
                 const localTodos = [];
                 console.log("co su thay doi du lieu");
