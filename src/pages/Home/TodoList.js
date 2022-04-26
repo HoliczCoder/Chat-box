@@ -29,8 +29,8 @@ function TodoList(props) {
     let unsub = null;
     useEffect(() => {
         (async () => {
-            // const collectionRef = collection(db, "todos");
-            // // const collectionQuery = query(collectionRef, limit(3));
+            const collectionRef = collection(db, "todos");
+            // const collectionQuery = query(collectionRef, limit(3));
             // unsub = onSnapshot(collectionRef, (snapShot) => {
             //     const localTodos = [];
             //     console.log("co su thay doi du lieu");
@@ -40,18 +40,21 @@ function TodoList(props) {
             //     });
             //     setTodos(localTodos);
             // });
-            const q = query(collection(db, "todos"), where("uid", "==", uid));
+            const q = query(collectionRef, where("uid", "==", uid));
 
             const querySnapshot = await getDocs(q);
             const localTodos = [];
-            querySnapshot.forEach((doc) => {
-                // doc.data() is never undefined for query doc snapshots
-                // console.log(doc.id, " => ", doc.data());
-                localTodos.push({ id: doc.id, message: doc.data().message });
+            unsub = onSnapshot(q, (snapShot) => {
+                const localTodos = [];
+                console.log("co su thay doi du lieu");
+                /*  localTodos.push({ id: doc.id, message: doc.data().message }); */
+                snapShot.forEach((doc) => {
+                    localTodos.push({ id: doc.id, message: doc.data().message });
+                });
+                setTodos(localTodos);
             });
-            setTodos(localTodos);
         })();
-
+        console.log(todos)
     }, []);
     const [todos, setTodos] = useState([]);
     const deleteNote = async (id) => {
@@ -76,7 +79,6 @@ function TodoList(props) {
                             <button className="flex-no-shrink p-2 ml-2 border-2 rounded text-red-500 border-red-500 hover:text-white hover:bg-red-500" onClick={() => deleteNote(todo.id)}>Delete Note</button>
                         </div>
                     ))}
-
                 </div>
             </div>
         </div>

@@ -12,7 +12,6 @@ export default function Login() {
     e.preventDefault();
     try {
       const resp = await signInWithEmailAndPassword(auth, email, password);
-      console.log(resp.user);
       sessionStorage.setItem("user", JSON.stringify(resp.user));
       navigate('/home');
     } catch (e) {
